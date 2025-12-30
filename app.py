@@ -1,7 +1,18 @@
 import streamlit as st
 import joblib
 import pandas as pd
+import requests
 
+#DEEPSEEK调用函数
+def ask_deepseek(prompt):
+    url = "http://localhost:11434/api/generate"
+    payload = {
+        "model": "deepseek-r1:7b",
+        "prompt": prompt,
+        "stream": False
+    }
+    response = requests.post(url, json=payload)
+    return response.json()["response"]
 # ===============================
 # 加载模型和阈值（分开）
 # ===============================
@@ -47,3 +58,27 @@ if st.button("预测风险"):
         st.error("高风险患者")
     else:
         st.success("低风险患者")
+#增加交互框
+    st.divider()
+    st.subheader("🧠 智能解读（DeepSeek）")
+
+    default_prompt = f"""
+    患者 ICU 死亡风险预测结果如下：
+    - 预测死亡风险概率：{prob:.3f}
+    - 风险分层：{"高风险" if pred==1 else "低风险"}
+
+    请用临床医生能理解的语言，对该风险结果进行解释，
+    不给出诊疗建议，仅做风险解读。
+    """
+
+    user_question = st.text_area(
+        "你可以向模型提问（例如：如何理解这个风险？）",
+        value=default_prompt,
+        height=150
+    )
+
+    if st.button("向 DeepSeek 提问"):
+        with st.spinner("DeepSeek 思考中..."):
+            answer = ask_deepseek(user_question)
+        st.markdown("### DeepSeek 回复")
+        st.write(answer)
