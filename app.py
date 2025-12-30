@@ -22,21 +22,25 @@ st.write("请输入患者特征，系统将输出预测风险")
 # ===============================
 # 特征输入（必须与训练时一致）
 # ===============================
-FEATURES = [
-    "gender",
-    "admission_age",
-    "los_icu",
-    "wbc"
+FEATURES_MAP = [
+    "性别": "gender",
+    "入院年龄（岁）":"admission_age",
+    "ICU住院时间（天）": "los_icu",
+    "白细胞计数（×10⁹/L）": "wbc"
 ]
 
 input_data = {}
-for feature in FEATURES:
-    input_data[feature] = st.number_input(
-        feature,
-        value=0.0
-    )
+gender_cn = st.selectbox("性别", ["男", "女"])
+input_data["gender"] = 0 if gender_cn == "女" else 1
 
-X_input = pd.DataFrame([input_data])
+
+# 其他连续变量
+# ===============================
+input_data["admission_age"] = st.number_input("入院年龄（岁）",min_value=0.0, max_value=90.0, value=0.0)
+input_data["los_icu"] = st.number_input( "ICU 住院时间（天）", min_value=0.0, value=0.0)
+input_data["wbc"] = st.number_input( "白细胞计数（×10⁹/L）", min_value=0.0, value=0.0)
+
+X_input = pd.DataFrame([input_data])[["gender", "admission_age", "los_icu", "wbc"]]
 
 # ===============================
 # 预测
