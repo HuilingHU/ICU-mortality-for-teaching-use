@@ -87,7 +87,7 @@ if st.session_state.predicted:
     # DeepSeek 对话区
     # ===============================
     st.divider()
-    st.subheader("🧠 智能解读（DeepSeek）")
+    st.subheader("智能解读（DeepSeek）")
 
     default_prompt = f"""
 患者 ICU 死亡风险预测结果如下：
