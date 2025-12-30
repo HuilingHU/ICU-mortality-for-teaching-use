@@ -20,27 +20,17 @@ st.title("ICU 死亡风险预测工具（XGBoost）")
 st.write("请输入患者特征，系统将输出预测风险")
 
 # ===============================
-# 特征输入（必须与训练时一致）
+# 性别（中文选择 → 数值编码）
 # ===============================
-FEATURES_MAP = [
-    "性别": "gender",
-    "入院年龄（岁）":"admission_age",
-    "ICU住院时间（天）": "los_icu",
-    "白细胞计数（×10⁹/L）": "wbc"
-]
-
-input_data = {}
 gender_cn = st.selectbox("性别", ["男", "女"])
-input_data["gender"] = 0 if gender_cn == "女" else 1
-
-
-# 其他连续变量
+gender_code = 1 if gender_cn == "男" else 0
 # ===============================
-input_data["admission_age"] = st.number_input("入院年龄（岁）",min_value=0.0, max_value=90.0, value=0.0)
-input_data["los_icu"] = st.number_input( "ICU 住院时间（天）", min_value=0.0, value=0.0)
-input_data["wbc"] = st.number_input( "白细胞计数（×10⁹/L）", min_value=0.0, value=0.0)
-
-X_input = pd.DataFrame([input_data])[["gender", "admission_age", "los_icu", "wbc"]]
+# 其他连续变量（中文 + 单位）
+# ===============================
+admission_age = st.number_input("入院年龄（岁）", min_value=0, max_value=90, value=0)
+los_icu = st.number_input("ICU 住院时间（天）", min_value=0.0, value=0.0)
+wbc = st.number_input("白细胞计数（×10⁹/L）", min_value=0.0, value=0.0)
+X_input = pd.DataFrame([{"gender": gender_code, "admission_age": admission_age, "los_icu": los_icu, "wbc": wbc}])
 
 # ===============================
 # 预测
